@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>resources/common_passwords.txt</file>
+        <file>resources/logo.png</file>
+    </qresource>
+</RCC>
