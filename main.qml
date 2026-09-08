@@ -18,17 +18,6 @@ ApplicationWindow {
         ColorAnimation { duration: 250 }
     }
 
-    // F11 Tam Ekran Kısayolu
-    Shortcut {
-        sequence: "F11"
-        onActivated: {
-            if (root.visibility === Window.FullScreen) {
-                root.visibility = Window.Maximized;
-            } else {
-                root.visibility = Window.FullScreen;
-            }
-        }
-    }
 
     // Tema Durumu (Gece / Gündüz)
     property bool isDarkTheme: true
@@ -206,22 +195,23 @@ ApplicationWindow {
     }
 
     ScrollView {
+        id: mainScrollView
         anchors.fill: parent
         contentWidth: availableWidth
         clip: true
 
         ColumnLayout {
-            // Ekrana ferahça yayılma: geniş ekranlarda 1360px'e kadar esneme
-            width: Math.min(parent.width - 64, 1360)
+            // Pencereye tam yayılma (kenarlarda gereksiz boşluk kalmaz)
+            width: mainScrollView.availableWidth > 32 ? (mainScrollView.availableWidth - 32) : 800
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 24
-            Layout.topMargin: 24
-            Layout.bottomMargin: 32
+            spacing: 14
+            Layout.topMargin: 14
+            Layout.bottomMargin: 20
 
             // ================= HEADER =================
             Rectangle {
                 Layout.fillWidth: true
-                height: 84
+                height: 70
                 color: root.theme.cardBg
                 radius: 12
                 border.color: root.theme.cardBorder
@@ -311,42 +301,6 @@ ApplicationWindow {
                             }
                         }
 
-                        // Tam Ekran Aç/Kapat Butonu
-                        Button {
-                            id: fullscreenToggleBtn
-                            implicitHeight: 38
-                            implicitWidth: 38
-                            hoverEnabled: true
-
-                            background: Rectangle {
-                                color: fullscreenToggleBtn.down ? root.theme.buttonDown : (fullscreenToggleBtn.hovered ? root.theme.buttonHover : root.theme.subCardBg)
-                                radius: 8
-                                border.color: fullscreenToggleBtn.hovered ? root.theme.primary : root.theme.cardBorder
-                                border.width: 1
-
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
-                            }
-
-                            contentItem: Text {
-                                text: root.visibility === Window.FullScreen ? "🗗" : "🗖"
-                                font.pixelSize: 15
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                color: root.theme.textPrimary
-                            }
-
-                            ToolTip.visible: fullscreenToggleBtn.hovered
-                            ToolTip.delay: 250
-                            ToolTip.text: root.visibility === Window.FullScreen ? "Tam Ekrandan Çık (F11)" : "Tam Ekrana Geç (F11)"
-                            onClicked: {
-                                if (root.visibility === Window.FullScreen) {
-                                    root.visibility = Window.Maximized;
-                                } else {
-                                    root.visibility = Window.FullScreen;
-                                }
-                            }
-                        }
 
                         // Güvenlik Rozeti
                         Rectangle {
@@ -384,7 +338,7 @@ ApplicationWindow {
                 radius: 12
                 border.color: root.theme.cardBorder
                 border.width: 1
-                implicitHeight: inputCol.implicitHeight + 40
+                implicitHeight: inputCol.implicitHeight + 32
 
                 Behavior on color { ColorAnimation { duration: 200 } }
                 Behavior on border.color { ColorAnimation { duration: 200 } }
@@ -392,8 +346,8 @@ ApplicationWindow {
                 ColumnLayout {
                     id: inputCol
                     anchors.fill: parent
-                    anchors.margins: 20
-                    spacing: 16
+                    anchors.margins: 16
+                    spacing: 12
 
                     RowLayout {
                         Layout.fillWidth: true
@@ -584,8 +538,8 @@ ApplicationWindow {
                     GridLayout {
                         Layout.fillWidth: true
                         columns: 3
-                        rowSpacing: 10
-                        columnSpacing: 12
+                        rowSpacing: 8
+                        columnSpacing: 10
 
                         property bool hasInput: passwordInput.text.length > 0
 
@@ -748,7 +702,7 @@ ApplicationWindow {
                 radius: 12
                 border.color: root.theme.cardBorder
                 border.width: 1
-                implicitHeight: resultCol.implicitHeight + 40
+                implicitHeight: resultCol.implicitHeight + 32
                 visible: root.hasAnalyzed
 
                 Behavior on color { ColorAnimation { duration: 200 } }
@@ -757,8 +711,8 @@ ApplicationWindow {
                 ColumnLayout {
                     id: resultCol
                     anchors.fill: parent
-                    anchors.margins: 20
-                    spacing: 20
+                    anchors.margins: 16
+                    spacing: 14
 
                     // Skor Başlık & Seviye Rozeti
                     RowLayout {
@@ -993,7 +947,7 @@ ApplicationWindow {
                 radius: 12
                 border.color: root.theme.cardBorder
                 border.width: 1
-                implicitHeight: historyCol.implicitHeight + 40
+                implicitHeight: historyCol.implicitHeight + 32
 
                 Behavior on color { ColorAnimation { duration: 200 } }
                 Behavior on border.color { ColorAnimation { duration: 200 } }
@@ -1001,8 +955,8 @@ ApplicationWindow {
                 ColumnLayout {
                     id: historyCol
                     anchors.fill: parent
-                    anchors.margins: 20
-                    spacing: 16
+                    anchors.margins: 16
+                    spacing: 12
 
                     RowLayout {
                         Layout.fillWidth: true
@@ -1187,7 +1141,7 @@ ApplicationWindow {
         property bool passed: status === "passed"
 
         Layout.fillWidth: true
-        height: 52
+        height: 46
         radius: 8
         color: critItem.status === "passed"
                ? root.theme.critPassedBg
