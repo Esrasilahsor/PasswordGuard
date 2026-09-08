@@ -133,4 +133,4 @@ Projenin tüm fonksiyonel ve teknik gereksinimleri [PasswordGuard_Gereksinimler_
 
 ## Author
 
-- **Halil İbrahim Kaya** (2026)
+- **Esra Silahşor** (2026)
