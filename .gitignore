@@ -87,5 +87,4 @@ tests_build/
 debug/
 release/
 bin/
-dist/
 .qm/
