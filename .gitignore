@@ -1,0 +1,40 @@
+# C++ / Qt build artifacts
+*.o
+*.obj
+moc_*.cpp
+moc_*.h
+moc_*
+qrc_*.cpp
+qrc_*.o
+ui_*.h
+Makefile*
+.qmake.stash
+
+# Qt Creator specific files
+*.pro.user
+*.pro.user.*
+*.qmlproject.user
+*.qmlproject.user.*
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+.qtcreator/
+
+# Build directories
+build/
+build-*/
+bin/
+release/
+debug/
+
+# Runtime and SQLite database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# OS / Temporary files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.autosave

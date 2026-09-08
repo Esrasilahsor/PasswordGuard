@@ -229,14 +229,26 @@ ApplicationWindow {
                         width: 50
                         height: 50
                         radius: 10
-                        color: root.isDarkTheme ? "#312E81" : "#EEF2FF"
+                        color: root.isDarkTheme ? "#1E293B" : "#EEF2FF"
                         border.color: root.isDarkTheme ? "#6366F1" : "#818CF8"
                         border.width: 1
+                        clip: true
+
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: 4
+                            source: "qrc:/data/logo.png"
+                            fillMode: Image.PreserveAspectFit
+                            mipmap: true
+                            smooth: true
+                            visible: status === Image.Ready
+                        }
 
                         Text {
                             anchors.centerIn: parent
                             text: "🛡️"
                             font.pixelSize: 24
+                            visible: parent.children[0].status !== Image.Ready
                         }
                     }
 
@@ -265,7 +277,7 @@ ApplicationWindow {
                         Button {
                             id: themeToggleBtn
                             implicitHeight: 38
-                            implicitWidth: 124
+                            implicitWidth: 130
                             hoverEnabled: true
 
                             background: Rectangle {
@@ -278,18 +290,73 @@ ApplicationWindow {
                                 Behavior on border.color { ColorAnimation { duration: 150 } }
                             }
 
-                            contentItem: RowLayout {
-                                anchors.centerIn: parent
-                                spacing: 6
-                                Text {
-                                    text: root.isDarkTheme ? "☀️" : "🌙"
-                                    font.pixelSize: 14
-                                }
-                                Text {
-                                    text: root.isDarkTheme ? "Açık Tema" : "Koyu Tema"
-                                    color: root.theme.textPrimary
-                                    font.pixelSize: 12
-                                    font.bold: true
+                            contentItem: Item {
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Canvas {
+                                        id: themeIconCanvas
+                                        width: 18
+                                        height: 18
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.reset();
+                                            ctx.clearRect(0, 0, width, height);
+
+                                            if (root.isDarkTheme) {
+                                                // Açık tema seçeneği için Güneş İkonu (Göz alıcı altın sarısı)
+                                                ctx.strokeStyle = "#FBBF24";
+                                                ctx.fillStyle = "#FBBF24";
+                                                ctx.lineWidth = 1.8;
+                                                ctx.lineCap = "round";
+
+                                                // Güneş gövdesi
+                                                ctx.beginPath();
+                                                ctx.arc(9, 9, 3.8, 0, 2 * Math.PI);
+                                                ctx.fill();
+
+                                                // 8 Işık Hüzmesi
+                                                for (var a = 0; a < 8; a++) {
+                                                    var angle = a * Math.PI / 4;
+                                                    var x1 = 9 + Math.cos(angle) * 5.8;
+                                                    var y1 = 9 + Math.sin(angle) * 5.8;
+                                                    var x2 = 9 + Math.cos(angle) * 8.2;
+                                                    var y2 = 9 + Math.sin(angle) * 8.2;
+                                                    ctx.beginPath();
+                                                    ctx.moveTo(x1, y1);
+                                                    ctx.lineTo(x2, y2);
+                                                    ctx.stroke();
+                                                }
+                                            } else {
+                                                // Koyu tema seçeneği için Hilal Ay İkonu (Belirgin mor/indigo)
+                                                ctx.fillStyle = "#4F46E5";
+                                                ctx.beginPath();
+                                                ctx.arc(9, 9, 7, -Math.PI * 0.45, Math.PI * 0.55, false);
+                                                ctx.bezierCurveTo(8.5, 13.5, 4.5, 11, 4.5, 9);
+                                                ctx.bezierCurveTo(4.5, 5.5, 7.5, 2.5, 8.5, 2);
+                                                ctx.closePath();
+                                                ctx.fill();
+                                            }
+                                        }
+
+                                        Connections {
+                                            target: root
+                                            function onIsDarkThemeChanged() {
+                                                themeIconCanvas.requestPaint();
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: root.isDarkTheme ? "Açık Tema" : "Koyu Tema"
+                                        color: root.theme.textPrimary
+                                        font.pixelSize: 12
+                                        font.bold: true
+                                    }
                                 }
                             }
 
@@ -635,58 +702,149 @@ ApplicationWindow {
                         Button {
                             id: analyzeBtn
                             Layout.fillWidth: true
-                            implicitHeight: 44
+                            implicitHeight: 46
+                            hoverEnabled: true
+
                             background: Rectangle {
-                                color: analyzeBtn.down ? "#4338CA" : (analyzeBtn.hovered ? "#4F46E5" : "#6366F1")
+                                color: analyzeBtn.down ? "#3730A3" : (analyzeBtn.hovered ? "#4F46E5" : "#6366F1")
                                 radius: 8
+                                Behavior on color { ColorAnimation { duration: 150 } }
                             }
-                            contentItem: RowLayout {
-                                spacing: 8
-                                anchors.centerIn: parent
-                                Text {
-                                    text: "⚡"
-                                    font.pixelSize: 15
-                                }
-                                Text {
-                                    text: "Şifreyi Analiz Et"
-                                    color: "#FFFFFF"
-                                    font.pixelSize: 14
-                                    font.bold: true
+
+                            contentItem: Item {
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 10
+
+                                    Canvas {
+                                        id: boltCanvas
+                                        width: 16
+                                        height: 18
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.reset();
+                                            ctx.clearRect(0, 0, width, height);
+                                            ctx.fillStyle = "#FFFFFF";
+                                            ctx.beginPath();
+                                            ctx.moveTo(9, 0);
+                                            ctx.lineTo(2, 9.5);
+                                            ctx.lineTo(8, 9.5);
+                                            ctx.lineTo(7, 18);
+                                            ctx.lineTo(14, 7.5);
+                                            ctx.lineTo(8.5, 7.5);
+                                            ctx.closePath();
+                                            ctx.fill();
+                                        }
+                                    }
+
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: "Şifreyi Analiz Et"
+                                        color: "#FFFFFF"
+                                        font.pixelSize: 15
+                                        font.bold: true
+                                    }
                                 }
                             }
+
                             onClicked: {
                                 runAnalysis();
                             }
                         }
 
-                        // FR-UI-006: Temizleme İşlemi
+                        // FR-UI-006: Temizleme İşlemi (Vektörel Çöp Kutusu İkonlu)
                         Button {
                             id: clearBtn
                             implicitWidth: 140
-                            implicitHeight: 44
+                            implicitHeight: 46
+                            hoverEnabled: true
+
                             background: Rectangle {
                                 color: clearBtn.down ? root.theme.buttonDown : (clearBtn.hovered ? root.theme.buttonHover : root.theme.buttonBg)
-                                border.color: root.theme.buttonBorder
-                                border.width: 1
+                                border.color: clearBtn.hovered ? (root.isDarkTheme ? "#EF4444" : "#DC2626") : root.theme.buttonBorder
+                                border.width: clearBtn.hovered ? 1.5 : 1
                                 radius: 8
 
                                 Behavior on color { ColorAnimation { duration: 150 } }
                                 Behavior on border.color { ColorAnimation { duration: 150 } }
                             }
-                            contentItem: RowLayout {
-                                spacing: 6
-                                anchors.centerIn: parent
-                                Text {
-                                    text: "🗑️"
-                                    font.pixelSize: 14
-                                }
-                                Text {
-                                    text: "Temizle"
-                                    color: root.theme.buttonText
-                                    font.pixelSize: 14
-                                    font.bold: true
+
+                            contentItem: Item {
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Canvas {
+                                        id: trashCanvas
+                                        width: 16
+                                        height: 18
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        property color iconColor: clearBtn.hovered
+                                                                  ? (root.isDarkTheme ? "#F87171" : "#EF4444")
+                                                                  : (root.isDarkTheme ? "#CBD5E1" : "#475569")
+
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.reset();
+                                            ctx.clearRect(0, 0, width, height);
+                                            ctx.strokeStyle = iconColor;
+                                            ctx.lineWidth = 1.6;
+                                            ctx.lineCap = "round";
+                                            ctx.lineJoin = "round";
+
+                                            // Üst Kulp
+                                            ctx.beginPath();
+                                            ctx.moveTo(6, 2.5);
+                                            ctx.lineTo(10, 2.5);
+                                            ctx.stroke();
+
+                                            // Kapak Çizgisi
+                                            ctx.beginPath();
+                                            ctx.moveTo(2, 5);
+                                            ctx.lineTo(14, 5);
+                                            ctx.stroke();
+
+                                            // Kova Gövdesi
+                                            ctx.beginPath();
+                                            ctx.moveTo(3.5, 5);
+                                            ctx.lineTo(4.5, 15.5);
+                                            ctx.lineTo(11.5, 15.5);
+                                            ctx.lineTo(12.5, 5);
+                                            ctx.stroke();
+
+                                            // Dikey İki Çizgi
+                                            ctx.beginPath();
+                                            ctx.moveTo(6.5, 8);
+                                            ctx.lineTo(6.5, 13);
+                                            ctx.moveTo(9.5, 8);
+                                            ctx.lineTo(9.5, 13);
+                                            ctx.stroke();
+                                        }
+
+                                        onIconColorChanged: requestPaint()
+
+                                        Connections {
+                                            target: root
+                                            function onIsDarkThemeChanged() {
+                                                trashCanvas.requestPaint();
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: "Temizle"
+                                        color: clearBtn.hovered
+                                               ? (root.isDarkTheme ? "#F87171" : "#EF4444")
+                                               : root.theme.buttonText
+                                        font.pixelSize: 14
+                                        font.bold: true
+                                    }
                                 }
                             }
+
                             onClicked: {
                                 clearAll();
                             }
@@ -983,6 +1141,9 @@ ApplicationWindow {
                             id: clearHistoryBtn
                             enabled: root.historyList.length > 0
                             implicitHeight: 36
+                            implicitWidth: 140
+                            hoverEnabled: true
+
                             background: Rectangle {
                                 color: clearHistoryBtn.enabled
                                        ? (clearHistoryBtn.down ? "#7F1D1D" : (clearHistoryBtn.hovered ? "#991B1B" : (root.isDarkTheme ? "#450A0A" : "#FEE2E2")))
@@ -993,20 +1154,79 @@ ApplicationWindow {
 
                                 Behavior on color { ColorAnimation { duration: 150 } }
                             }
-                            contentItem: RowLayout {
-                                spacing: 6
-                                anchors.centerIn: parent
-                                Text {
-                                    text: "🗑️"
-                                    font.pixelSize: 12
-                                }
-                                Text {
-                                    text: "Geçmişi Temizle"
-                                    color: clearHistoryBtn.enabled ? (root.isDarkTheme ? "#FCA5A5" : "#DC2626") : root.theme.textMuted
-                                    font.pixelSize: 12
-                                    font.bold: true
+
+                            contentItem: Item {
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 6
+
+                                    Canvas {
+                                        id: histTrashCanvas
+                                        width: 14
+                                        height: 16
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        property color iconColor: clearHistoryBtn.enabled
+                                                                  ? (root.isDarkTheme ? "#FCA5A5" : "#DC2626")
+                                                                  : root.theme.textMuted
+
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.reset();
+                                            ctx.clearRect(0, 0, width, height);
+                                            ctx.strokeStyle = iconColor;
+                                            ctx.lineWidth = 1.4;
+                                            ctx.lineCap = "round";
+                                            ctx.lineJoin = "round";
+
+                                            // Üst tutamaç
+                                            ctx.beginPath();
+                                            ctx.moveTo(5, 2.5);
+                                            ctx.lineTo(9, 2.5);
+                                            ctx.stroke();
+
+                                            // Kapak
+                                            ctx.beginPath();
+                                            ctx.moveTo(1.5, 4.5);
+                                            ctx.lineTo(12.5, 4.5);
+                                            ctx.stroke();
+
+                                            // Gövde
+                                            ctx.beginPath();
+                                            ctx.moveTo(3, 4.5);
+                                            ctx.lineTo(4, 14.5);
+                                            ctx.lineTo(10, 14.5);
+                                            ctx.lineTo(11, 4.5);
+                                            ctx.stroke();
+
+                                            // Çizgiler
+                                            ctx.beginPath();
+                                            ctx.moveTo(5.5, 7);
+                                            ctx.lineTo(5.5, 12);
+                                            ctx.moveTo(8.5, 7);
+                                            ctx.lineTo(8.5, 12);
+                                            ctx.stroke();
+                                        }
+
+                                        onIconColorChanged: requestPaint()
+
+                                        Connections {
+                                            target: root
+                                            function onIsDarkThemeChanged() {
+                                                histTrashCanvas.requestPaint();
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: "Geçmişi Temizle"
+                                        color: clearHistoryBtn.enabled ? (root.isDarkTheme ? "#FCA5A5" : "#DC2626") : root.theme.textMuted
+                                        font.pixelSize: 12
+                                        font.bold: true
+                                    }
                                 }
                             }
+
                             onClicked: {
                                 confirmDialog.open();
                             }
@@ -1107,6 +1327,7 @@ ApplicationWindow {
     Dialog {
         id: confirmDialog
         title: "Analiz Geçmişini Temizle"
+        width: 380
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
         modal: true

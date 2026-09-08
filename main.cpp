@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("PasswordGuard"));
     app.setOrganizationName(QStringLiteral("PasswordGuardTeam"));
+    app.setWindowIcon(QIcon(QStringLiteral(":/data/logo.png")));
 
     PasswordAnalyzer analyzer;
     Database db;

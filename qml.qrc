@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>data/Pwdb_top-1000.txt</file>
+        <file>data/logo.png</file>
     </qresource>
 </RCC>

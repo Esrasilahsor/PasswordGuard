@@ -219,6 +219,7 @@ DIST          = /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/spec_pre.pr
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf \
+		../../.qmake.stash \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -409,6 +410,7 @@ Makefile: ../../PasswordGuard.pro /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/li
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -587,6 +589,7 @@ Makefile: ../../PasswordGuard.pro /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/li
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf:
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf:
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf:
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf:
 /home/halilibrahim/Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf:
@@ -655,6 +658,7 @@ compiler_rcc_clean:
 qrc_qml.cpp: ../../qml.qrc \
 		/home/halilibrahim/Qt/5.15.2/gcc_64/bin/rcc \
 		../../main.qml \
+		../../data/logo.png \
 		../../data/Pwdb_top-1000.txt
 	/home/halilibrahim/Qt/5.15.2/gcc_64/bin/rcc -name qml ../../qml.qrc -o qrc_qml.cpp
 
