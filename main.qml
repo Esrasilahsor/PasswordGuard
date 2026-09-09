@@ -5,12 +5,11 @@ import QtQuick.Window 2.15
 
 ApplicationWindow {
     id: root
-    width: 1200
+    width: 980
     height: 800
-    minimumWidth: 860
-    minimumHeight: 640
+    minimumWidth: 800
+    minimumHeight: 600
     visible: true
-    visibility: Window.Maximized
     title: qsTr("PasswordGuard - Güvenli Şifre Analiz Sistemi")
     color: root.theme.windowBg
 
@@ -200,15 +199,19 @@ ApplicationWindow {
         contentWidth: availableWidth
         clip: true
 
-        ColumnLayout {
-            // Pencereye tam yayılma (kenarlarda gereksiz boşluk kalmaz)
-            width: mainScrollView.availableWidth > 32 ? (mainScrollView.availableWidth - 32) : 800
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 14
-            Layout.topMargin: 14
-            Layout.bottomMargin: 20
+        Item {
+            width: mainScrollView.availableWidth
+            implicitHeight: mainCol.implicitHeight + 40
 
-            // ================= HEADER =================
+            ColumnLayout {
+                id: mainCol
+                width: Math.min(mainScrollView.availableWidth - 40, 960)
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 16
+                spacing: 14
+
+                // ================= HEADER =================
             Rectangle {
                 Layout.fillWidth: true
                 height: 70
@@ -1069,13 +1072,14 @@ ApplicationWindow {
                             model: root.lastAnalysis ? root.lastAnalysis.suggestions : []
                             delegate: Rectangle {
                                 Layout.fillWidth: true
-                                height: 34
+                                implicitHeight: Math.max(36, sugRow.implicitHeight + 14)
                                 color: root.theme.subCardBg
                                 radius: 6
                                 border.color: root.theme.subCardBorder
                                 border.width: 1
 
                                 RowLayout {
+                                    id: sugRow
                                     anchors.fill: parent
                                     anchors.leftMargin: 12
                                     anchors.rightMargin: 12
@@ -1084,12 +1088,15 @@ ApplicationWindow {
                                         text: "•"
                                         color: root.isDarkTheme ? "#FBBF24" : "#D97706"
                                         font.bold: true
+                                        Layout.alignment: Qt.AlignVCenter
                                     }
                                     Text {
+                                        id: sugText
                                         Layout.fillWidth: true
                                         text: modelData
                                         color: root.theme.textPrimary
                                         font.pixelSize: 12
+                                        wrapMode: Text.WordWrap
                                     }
                                 }
                             }
@@ -1251,14 +1258,59 @@ ApplicationWindow {
                         }
                     }
 
-                    // Geçmiş Kayıtları Listesi (FR-DB-003)
+                    // Tablo Başlığı (FR-DB-003: Tarih, Güvenlik Puanı, Güvenlik Seviyesi)
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 38
+                        visible: root.historyList.length > 0
+                        color: root.theme.historyHeaderBg
+                        radius: 6
+                        border.color: root.theme.historyRowBorder
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 16
+                            anchors.rightMargin: 16
+                            spacing: 16
+
+                            Text {
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: 200
+                                text: "Tarih"
+                                color: root.theme.textSecondary
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                Layout.preferredWidth: 140
+                                horizontalAlignment: Text.AlignHCenter
+                                text: "Güvenlik Puanı"
+                                color: root.theme.textSecondary
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                Layout.preferredWidth: 140
+                                horizontalAlignment: Text.AlignHCenter
+                                text: "Güvenlik Seviyesi"
+                                color: root.theme.textSecondary
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+                    }
+
+                    // Geçmiş Kayıtları Tablosu (FR-DB-003)
                     Repeater {
                         model: root.historyList
                         delegate: Rectangle {
                             Layout.fillWidth: true
-                            height: 52
+                            height: 48
                             color: root.theme.historyRowBg
-                            radius: 8
+                            radius: 6
                             border.color: root.theme.historyRowBorder
                             border.width: 1
 
@@ -1271,49 +1323,48 @@ ApplicationWindow {
                                 anchors.rightMargin: 16
                                 spacing: 16
 
+                                // Sütun 1: Tarih
                                 Text {
+                                    Layout.fillWidth: true
+                                    Layout.preferredWidth: 200
                                     text: modelData.analysisDate || ""
-                                    color: root.theme.textSecondary
+                                    color: root.theme.textPrimary
                                     font.pixelSize: 13
                                     font.family: "Monospace"
                                 }
 
+                                // Sütun 2: Güvenlik Puanı
                                 Text {
-                                    text: "Uzunluk: " + (modelData.passwordLength || 0) + " krk"
-                                    color: root.theme.textPrimary
-                                    font.pixelSize: 13
-                                }
-
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: modelData.criteriaResults || ""
-                                    color: root.theme.textMuted
-                                    font.pixelSize: 12
-                                    elide: Text.ElideRight
-                                }
-
-                                Rectangle {
-                                    width: 76
-                                    height: 26
-                                    radius: 6
-                                    color: root.getLevelBgColor(modelData.securityLevel)
-                                    border.color: root.getLevelColor(modelData.securityLevel)
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: modelData.securityLevel || ""
-                                        color: root.getLevelColor(modelData.securityLevel)
-                                        font.pixelSize: 11
-                                        font.bold: true
-                                    }
-                                }
-
-                                Text {
-                                    text: (modelData.score || 0) + " Puan"
+                                    Layout.preferredWidth: 140
+                                    horizontalAlignment: Text.AlignHCenter
+                                    text: (modelData.score !== undefined ? modelData.score : 0) + " / 100"
                                     color: root.getLevelColor(modelData.securityLevel)
-                                    font.pixelSize: 14
+                                    font.pixelSize: 13
                                     font.bold: true
+                                }
+
+                                // Sütun 3: Güvenlik Seviyesi
+                                Item {
+                                    Layout.preferredWidth: 140
+                                    height: 28
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 100
+                                        height: 26
+                                        radius: 6
+                                        color: root.getLevelBgColor(modelData.securityLevel)
+                                        border.color: root.getLevelColor(modelData.securityLevel)
+                                        border.width: 1
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: modelData.securityLevel || ""
+                                            color: root.getLevelColor(modelData.securityLevel)
+                                            font.pixelSize: 11
+                                            font.bold: true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1362,7 +1413,7 @@ ApplicationWindow {
         property bool passed: status === "passed"
 
         Layout.fillWidth: true
-        height: 46
+        implicitHeight: 48
         radius: 8
         color: critItem.status === "passed"
                ? root.theme.critPassedBg
@@ -1377,14 +1428,14 @@ ApplicationWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 10
+            anchors.leftMargin: 10
+            anchors.rightMargin: 10
+            spacing: 8
 
             Rectangle {
-                width: 26
-                height: 26
-                radius: 13
+                width: 24
+                height: 24
+                radius: 12
                 color: critItem.status === "passed"
                        ? root.theme.critPassedIconBg
                        : (critItem.status === "unmet" ? root.theme.critUnmetIconBg : root.theme.critNeutralIconBg)
@@ -1402,7 +1453,7 @@ ApplicationWindow {
                     color: critItem.status === "passed"
                            ? root.theme.critPassedIconText
                            : (critItem.status === "unmet" ? root.theme.critUnmetIconText : root.theme.critNeutralIconText)
-                    font.pixelSize: critItem.status === "neutral" ? 10 : 13
+                    font.pixelSize: critItem.status === "neutral" ? 10 : 12
                     font.bold: true
                 }
             }
@@ -1416,19 +1467,22 @@ ApplicationWindow {
                     color: critItem.status === "passed"
                            ? root.theme.critPassedText
                            : (critItem.status === "unmet" ? root.theme.critUnmetText : root.theme.critNeutralText)
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     font.bold: critItem.status === "passed"
                     elide: Text.ElideRight
                 }
                 Text {
+                    Layout.fillWidth: true
                     text: critItem.points
                     color: critItem.status === "passed"
                            ? root.theme.critPassedPoints
                            : (critItem.status === "unmet" ? root.theme.critUnmetPoints : root.theme.critNeutralPoints)
                     font.pixelSize: 10
                     font.bold: critItem.status === "passed"
+                    elide: Text.ElideRight
                 }
             }
         }
     }
+}
 }
