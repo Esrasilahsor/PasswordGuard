@@ -164,6 +164,6 @@ make -j$(nproc)
 
 ---
 
-## 📄 Lisans
+## Author
 
-Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır. Detaylar için lisans dosyasına başvurabilirsiniz.
+- **Halil İbrahim Kaya** (2026)
